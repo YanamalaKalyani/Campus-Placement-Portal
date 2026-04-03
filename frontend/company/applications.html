@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - Campus Placement Portal</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar sidebar-company">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon" id="companyLogoInitial">C</div>
+                    <div class="sidebar-logo-text">
+                        <h2 id="companyName">Company</h2>
+                        <p>Recruiter Portal</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+                <a href="applications.html" class="nav-item active"><span class="nav-icon">📝</span><span>Applications</span></a>
+                <a href="students.html" class="nav-item"><span class="nav-icon">👥</span><span>Student Profiles</span></a>
+                <a href="profile.html" class="nav-item"><span class="nav-icon">🏢</span><span>Company Profile</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📊</span><span>Analytics</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="page-title">
+                    <h1>Applications</h1>
+                    <p>View and manage student applications</p>
+                </div>
+                <div class="user-info">
+                    <div class="user-details">
+                        <span class="user-name" id="userName">Recruiter</span>
+                        <span class="user-role">Recruitment Team</span>
+                    </div>
+                    <div class="user-avatar" id="userAvatar">C</div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="stats-banner-simple">
+                    Total Applications: <span id="totalAppsCount" class="highlight-blue">0</span>
+                </div>
+
+                <div class="table-container-portal">
+                    <div class="table-responsive">
+                        <table class="data-table-portal">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Email</th>
+                                    <th>CGPA</th>
+                                    <th>Skills</th>
+                                    <th>Applied Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicationsTable">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="../js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const user = await checkAuth('company');
+            if (user) {
+                document.getElementById('companyName').textContent = user.name || 'Company';
+                document.getElementById('userName').textContent = user.name || 'Recruitment Team';
+                document.getElementById('userAvatar').textContent = (user.name || 'C').charAt(0).toUpperCase();
+                document.getElementById('companyLogoInitial').textContent = (user.name || 'C').charAt(0).toUpperCase();
+                loadApplications();
+            }
+        });
+
+        async function loadApplications() {
+            try {
+                const response = await fetch('/api/company/applications', { credentials: 'include' });
+                if (!response.ok) throw new Error('Failed to load applications');
+                
+                const data = await response.json();
+                renderApplications(data.applications);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('applicationsTable').innerHTML = '<tr><td colspan="7" style="text-align:center; color:red; padding: 2rem;">Failed to load data</td></tr>';
+            }
+        }
+
+        function renderApplications(apps) {
+            const table = document.getElementById('applicationsTable');
+            document.getElementById('totalAppsCount').textContent = apps.length;
+
+            if (apps.length === 0) {
+                table.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 3rem; color: var(--text-secondary);">No applications found</td></tr>';
+                return;
+            }
+
+            table.innerHTML = apps.map(app => `
+                <tr>
+                    <td>
+                        <div class="student-profile-cell">
+                            <div class="student-avatar-mini">${app.student_name.charAt(0)}</div>
+                            <div class="student-info-mini">
+                                <span class="student-name-text">${app.student_name}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="text-email">${app.student_email}</span></td>
+                    <td><span class="badge-cgpa">${app.cgpa || '0.00'}</span></td>
+                    <td>
+                        <div class="skills-chips-mini">
+                            ${(app.skills || 'N/A').split(',').map(s => `<span class="skill-chip-mini">${s.trim()}</span>`).join('')}
+                        </div>
+                    </td>
+                    <td><span class="text-date">${new Date(app.created_at).toLocaleDateString()}</span></td>
+                    <td><span class="status-badge ${app.status}">${app.status.toUpperCase()}</span></td>
+                    <td>
+                        <div class="action-cell">
+                            <select class="status-select-portal" onchange="updateStatus(${app.id}, this.value)">
+                                <option value="pending" ${app.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="interview" ${app.status === 'interview' ? 'selected' : ''}>Interview</option>
+                                <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Selected</option>
+                                <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateStatus(appId, newStatus) {
+            try {
+                const response = await fetch(`/api/company/applications/${appId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus }),
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    loadApplications();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Update failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Connection error');
+            }
+        }
+    </script>
+</body>
+</html>

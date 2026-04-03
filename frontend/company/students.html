@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profiles - Campus Placement Portal</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar sidebar-company">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon" id="companyLogoInitial">C</div>
+                    <div class="sidebar-logo-text">
+                        <h2 id="companyName">Company</h2>
+                        <p>Recruiter Portal</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+                <a href="applications.html" class="nav-item"><span class="nav-icon">📝</span><span>Applications</span></a>
+                <a href="students.html" class="nav-item active"><span class="nav-icon">👥</span><span>Student Profiles</span></a>
+                <a href="profile.html" class="nav-item"><span class="nav-icon">🏢</span><span>Company Profile</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📊</span><span>Analytics</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-title">
+                    <h1>Student Profiles</h1>
+                    <p>Browse eligible student candidates</p>
+                </div>
+                <div class="header-user">
+                    <span id="userName">Recruitment Team</span>
+                    <div class="user-avatar company-avatar" id="userAvatar">G</div>
+                </div>
+            </header>
+            
+            <div class="content-body">
+                <div class="stats-grid" style="margin-bottom: 1rem;">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div>
+                            <div class="stat-label">Total Students</div>
+                            <div class="stat-value" id="statTotalStudents">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div>
+                            <div class="stat-label">Placed Students</div>
+                            <div class="stat-value success" id="statPlacedStudents">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div>
+                            <div class="stat-label">Unplaced Students</div>
+                            <div class="stat-value danger" id="statUnplacedStudents">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section-portal">
+                    <div class="filter-input-group">
+                        <label class="filter-label-portal">Filter by Branch:</label>
+                        <select id="branchFilter" class="filter-select-portal" onchange="filterStudents()">
+                            <option value="">All Branches</option>
+                            <option value="CSE">CSE</option>
+                            <option value="ECE">ECE</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Civil">Civil</option>
+                            <option value="CE">CE</option>
+                        </select>
+                    </div>
+                    <div class="filter-input-group">
+                        <label class="filter-label-portal">Min CGPA Requirement:</label>
+                        <input type="number" id="cgpaFilter" class="filter-input-portal" placeholder="e.g., 7.0" step="0.1" min="0" max="10" oninput="filterStudents()">
+                    </div>
+                </div>
+
+                <div class="student-profiles-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;" id="studentsGrid">
+                    <!-- Student cards will be loaded here -->
+                </div>
+
+                <div id="emptyState" class="empty-state hidden" style="text-align:center; margin-top: 2rem; color: var(--text-secondary);">
+                    <p>No students match the current criteria.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Detail Modal Removed in favor of dedicated detail page -->
+    
+    <script src="../js/auth.js"></script>
+    <script>
+        let companyStudents = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const user = await checkAuth('company');
+            if (user) {
+                document.getElementById('companyName').textContent = user.name || 'Company';
+                document.getElementById('userName').textContent = user.name || 'Recruitment Team';
+                document.getElementById('userAvatar').textContent = (user.name || 'C').charAt(0).toUpperCase();
+                document.getElementById('companyLogoInitial').textContent = (user.name || 'C').charAt(0).toUpperCase();
+                loadStudents();
+            }
+        });
+
+        async function loadStudents() {
+            try {
+                const response = await fetch('/api/company/students', { credentials: 'include' });
+                if (!response.ok) throw new Error('Could not load student profiles');
+                const data = await response.json();
+                const students = data.students || [];
+                companyStudents = students;
+
+                renderStudents(students);
+                updateStats(students);
+            } catch (error) {
+                console.error('Error loading students:', error);
+                document.getElementById('studentsGrid').innerHTML = '<p class="error">Unable to load students.</p>';
+            }
+        }
+
+        function updateStats(students) {
+            const total = students.length;
+            const placed = students.filter(s => s.placement_status === 'placed').length;
+            const unplaced = total - placed;
+
+            document.getElementById('statTotalStudents').textContent = total;
+            document.getElementById('statPlacedStudents').textContent = placed;
+            document.getElementById('statUnplacedStudents').textContent = unplaced;
+
+            const emptyState = document.getElementById('emptyState');
+            emptyState.classList.toggle('hidden', total > 0);
+        }
+
+        function renderStudents(students) {
+            const grid = document.getElementById('studentsGrid');
+            if (students.length === 0) {
+                grid.innerHTML = '';
+                document.getElementById('emptyState').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('emptyState').classList.add('hidden');
+            grid.innerHTML = students.map(student => `
+                <div class="dashboard-card">
+                    <div style="margin-bottom: 1.25rem;">
+                        <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">${student.name}</h3>
+                        <span style="font-size: 0.75rem; color: var(--text-secondary);">${student.enrollment_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem; margin-bottom: 1rem;">
+                        <div><strong>Branch:</strong> ${student.branch || 'Not specified'}</div>
+                        <div><strong>CGPA:</strong> ${student.cgpa || 'N/A'}</div>
+                        <div><strong>Email:</strong> <span style="word-break: break-all;">${student.email}</span></div>
+                        <div><strong>Status:</strong> <span class="status-badge ${student.placement_status}">${student.placement_status || 'unplaced'}</span></div>
+                        <div><strong>Skills:</strong> ${student.skills || 'Not specified'}</div>
+                    </div>
+                    <button class="btn btn-primary" style="border-radius: var(--radius-md); width: 100%;" onclick="viewProfile(${student.id})">View Profile</button>
+                </div>
+            `).join('');
+        }
+
+        function filterStudents() {
+            const branch = document.getElementById('branchFilter').value;
+            const cgpa = parseFloat(document.getElementById('cgpaFilter').value) || 0;
+
+            const filtered = companyStudents.filter(student => {
+                const branchMatch = !branch || student.branch === branch;
+                const cgpaValue = student.cgpa ? parseFloat(student.cgpa) : 0;
+                const cgpaMatch = !cgpa || cgpaValue >= cgpa;
+                return branchMatch && cgpaMatch;
+            });
+
+            renderStudents(filtered);
+            updateStats(filtered);
+        }
+
+        function viewProfile(studentId) {
+            window.location.href = `student_detail.html?id=${studentId}`;
+        }
+    </script>
+</body>
+</html>

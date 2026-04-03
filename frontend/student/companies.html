@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies - Student Dashboard</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                    </div>
+                    <div class="sidebar-logo-text">
+                        <h2>Campus Portal</h2>
+                        <p>Student Dashboard</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="companies.html" class="nav-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Companies</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>My Profile</span>
+                </a>
+                <a href="applications.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span>Applications</span>
+                </a>
+                <a href="notifications.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span>Notifications</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="page-title">
+                    <h1>Companies</h1>
+                    <p>Browse available placement drives</p>
+                </div>
+                <div class="user-info">
+                    <div class="user-details">
+                        <span class="user-name" id="userName">Student</span>
+                        <span class="user-role">Student</span>
+                    </div>
+                    <div class="user-avatar" id="userAvatar">S</div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                    <div class="card-header">
+                        <h3>Registered Companies</h3>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">View company details and apply. Green badge means you're eligible based on your CGPA.</p>
+                    </div>
+                    
+                    <div id="companyGrid" class="company-grid">
+                        <!-- Cards added by JS -->
+                    </div>
+
+                    <div id="emptyState" class="empty-state hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <p>No active placement drives available</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" class="modal-overlay hidden">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="modalTitle">Company Name</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Data filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        let appliedDrives = [];
+        let studentCGPA = 0;
+        let allDrives = [];
+        
+        (async function() {
+            const user = await checkAuth('student');
+            if (user) {
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+                await loadApplications();
+                loadDrives();
+            }
+        })();
+
+        async function loadApplications() {
+            try {
+                const response = await fetch('/api/student/applications', { credentials: 'include' });
+                if (response.ok) {
+                    const data = await response.json();
+                    appliedDrives = data.applications.map(app => app.drive_id);
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+            }
+        }
+
+        async function loadDrives() {
+            try {
+                const response = await fetch('/api/student/companies', { credentials: 'include' });
+                if (!response.ok) throw new Error('Failed to load drives');
+                
+                const data = await response.json();
+                studentCGPA = data.student_cgpa || 0;
+                allDrives = data.drives;
+                renderDrives(allDrives);
+            } catch (error) {
+                console.error('Error loading drives:', error);
+            }
+        }
+
+        function renderDrives(drives) {
+            const grid = document.getElementById('companyGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (!drives || drives.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            grid.innerHTML = drives.map(drive => {
+                // IMPORTANT: drive_id might be null if it's a direct company listing, so we use company_id as fallback
+                const isApplied = appliedDrives.includes(drive.drive_id) || (drive.company_id && appliedDrives.some(id => id === `comp_${drive.company_id}`));
+                const isEligible = parseFloat(studentCGPA) >= parseFloat(drive.min_cgpa || 0);
+                
+                const dispTitle = drive.drive_title || drive.company_position || 'Open Position';
+                const dispPackage = drive.drive_package || drive.company_package || 'N/A';
+                const dispRounds = drive.rounds || 'TBA';
+
+                return `
+                    <div class="company-card">
+                        <div class="card-top">
+                            <div class="company-info">
+                                <h3>${drive.company_name}</h3>
+                                <p>${drive.domain || 'General'}</p>
+                            </div>
+                            <div class="eligibility-badge ${isEligible ? 'eligible' : 'not-eligible'}">
+                                ${isEligible ? '✓ Eligible' : '✕ Not Eligible'}
+                            </div>
+                        </div>
+
+                        <div class="card-metrics">
+                            <div class="metric-item">
+                                <span class="metric-label">Package</span>
+                                <span class="metric-value">${dispPackage}${dispPackage !== 'N/A' ? ' LPA' : ''}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Position</span>
+                                <span class="metric-value">${dispTitle}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Min CGPA</span>
+                                <span class="metric-value">${drive.min_cgpa || '0.0'}</span>
+                            </div>
+                        </div>
+
+                        <div class="skills-box">
+                            <div class="skills-label">Skills Required</div>
+                            <div class="skills-list">${drive.required_skills || 'Foundational Skills'}</div>
+                        </div>
+
+                        <div class="card-actions">
+                            <button class="btn btn-view-details" onclick="openDetails(${drive.company_id})">View Details</button>
+                            ${isApplied 
+                                ? '<button class="btn btn-applied" disabled>Applied</button>' 
+                                : `<button class="btn btn-green" id="applyBtn_${drive.company_id}" onclick="applyToDrive(${drive.drive_id}, ${drive.company_id})" ${!isEligible ? 'disabled' : ''}>Apply Now</button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openDetails(companyId) {
+            console.log('Opening details for company:', companyId);
+            const drive = allDrives.find(d => parseInt(d.company_id) === parseInt(companyId));
+            if (!drive) {
+                console.error('Drive not found for company:', companyId);
+                return;
+            }
+
+            document.getElementById('modalTitle').textContent = drive.company_name;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="modal-detail-content">
+                    <div class="detail-section">
+                        <h4><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"></path></svg> Company Overview</h4>
+                        <p>${drive.company_description || 'A leading organization in its domain, looking for talented individuals to join their growing team.'}</p>
+                    </div>
+                    
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="label">Domain</span>
+                            <span class="value">${drive.domain || 'Information Technology'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Website</span>
+                            <span class="value"><a href="${drive.website || '#'}" target="_blank" style="color: var(--accent-red);">${drive.website || 'N/A'}</a></span>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Placement Drive Details</h4>
+                        <div class="drive-info-card">
+                            <p><strong>Job Role:</strong> ${drive.drive_title || drive.company_position || 'Not specified'}</p>
+                            <p><strong>Drive Date:</strong> ${drive.drive_date ? new Date(drive.drive_date).toLocaleDateString() : 'Scheduled Soon'}</p>
+                            <p><strong>Rounds:</strong> ${drive.rounds || 'Awaiting update'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('detailsModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').classList.add('hidden');
+        }
+
+        async function applyToDrive(driveId, companyId) {
+            if (!confirm('Submit your application to ' + (allDrives.find(d => d.company_id === companyId)?.company_name || 'this company') + '?')) return;
+            
+            const btn = document.getElementById(`applyBtn_${companyId}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Applying...';
+            }
+
+            try {
+                const payload = driveId ? { drive_id: driveId } : { company_id: companyId };
+                const response = await fetch('/api/student/applications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    if (btn) {
+                        btn.className = 'btn btn-applied';
+                        btn.textContent = 'Applied';
+                    }
+                    setTimeout(() => {
+                        loadApplications();
+                        loadDrives();
+                    }, 500);
+                } else {
+                    alert(result.error || 'Failed to apply');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = 'Apply Now';
+                    }
+                }
+            } catch (error) {
+                console.error('Error applying:', error);
+                alert('Network error. Please try again.');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Apply Now';
+                }
+            }
+        }
+    </script>
+    <script src="../js/notifications.js"></script>
+</body>
+</html>

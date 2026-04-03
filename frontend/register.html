@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Campus Placement Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                    </svg>
+                </div>
+                <h1 class="auth-title">Create Account</h1>
+                <p class="auth-subtitle">Register for a new account</p>
+                <span id="roleBadge" class="role-badge"></span>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="name" class="form-label" id="nameLabel">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-input" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group" id="studentEnrollmentField" style="display: none;">
+                    <label for="enrollment_number" class="form-label">Enrollment Number</label>
+                    <input type="text" id="enrollment_number" name="enrollment_number" class="form-input" placeholder="EN12345678">
+                </div>
+
+                <div class="form-group" id="companyWebsiteField" style="display: none;">
+                    <label for="website" class="form-label">Website</label>
+                    <input type="url" id="website" name="website" class="form-input" placeholder="https://www.company.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Create a password" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" placeholder="Confirm your password" required>
+                </div>
+
+                <!-- Student-specific fields -->
+                <div id="studentFields" class="hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="branch" class="form-label">Branch</label>
+                            <select id="branch" name="branch" class="form-select">
+                                <option value="CSE">CSE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="CE">CE (Computer Engineering)</option>
+                                <option value="Mechanical">Mechanical</option>
+                                <option value="Civil">Civil</option>
+                                <option value="EE">Electrical Engineering</option>
+                                <option value="IT">Information Technology</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cgpa" class="form-label">CGPA</label>
+                            <input type="number" id="cgpa" name="cgpa" class="form-input" placeholder="0.00" step="0.01" min="0" max="10">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input" placeholder="Enter your phone number">
+                    </div>
+                </div>
+
+                <input type="hidden" id="role" name="role" value="">
+
+                <button type="submit" class="btn btn-primary" id="registerBtn">
+                    <span id="registerBtnText">Create Account</span>
+                    <span id="registerSpinner" class="spinner hidden"></span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html" id="loginLink">Sign in</a></p>
+                <p style="margin-top: 0.5rem;"><a href="index.html">Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Get role from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const role = urlParams.get('role') || 'student';
+
+        document.getElementById('role').value = role;
+        document.getElementById('roleBadge').textContent = role;
+        document.getElementById('roleBadge').classList.add(role);
+        document.getElementById('loginLink').href = `login.html?role=${role}`;
+
+        const nameLabel = document.getElementById('nameLabel');
+        const studentEnrollmentField = document.getElementById('studentEnrollmentField');
+        const companyWebsiteField = document.getElementById('companyWebsiteField');
+
+        if (role === 'student') {
+            nameLabel.textContent = 'Full Name';
+            studentEnrollmentField.style.display = 'block';
+            companyWebsiteField.style.display = 'none';
+        } else if (role === 'company') {
+            nameLabel.textContent = 'Company Name';
+            studentEnrollmentField.style.display = 'none';
+            companyWebsiteField.style.display = 'block';
+        } else if (role === 'admin') {
+            nameLabel.textContent = 'Admin Name';
+            studentEnrollmentField.style.display = 'none';
+            companyWebsiteField.style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('alertContainer').innerHTML = '<div class="alert alert-info">Admin registration is not permitted through the public form. Use the default admin credentials at login.</div>';
+        }
+
+        // Update page title based on role
+        const titles = {
+            admin: 'Admin Registration',
+            student: 'Student Registration',
+            company: 'Company Registration'
+        };
+        document.querySelector('.auth-title').textContent = titles[role] || 'Create Account';
+    </script>
+</body>
+</html>

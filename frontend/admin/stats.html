@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Analytics - Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .chart-container {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+        .empty-chart-message {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            width: 80%;
+            z-index: 5;
+        }
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .kpi-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .kpi-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .kpi-trend {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .trend-up { color: var(--accent-green); }
+        .trend-down { color: var(--accent-red); }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .leaderboard-table th {
+            text-align: left;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .leaderboard-table td {
+            padding: 1rem 0;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .leaderboard-table tr:last-child td { border-bottom: none; }
+        
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-blue { background: #eff6ff; color: #2563eb; }
+
+        .mgmt-section {
+            display: none;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px dashed var(--border-color);
+        }
+        .mgmt-section.active { display: block; }
+        .hidden { display: none !important; }
+        
+        /* Premium Chart Styles */
+        .chart-container canvas {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.02));
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                    </div>
+                    <div class="sidebar-logo-text">
+                        <h2>Campus Portal</h2>
+                        <p>Admin Dashboard</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="companies.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Companies</span>
+                </a>
+                <a href="students.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Students</span>
+                </a>
+                <a href="stats.html" class="nav-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Placement Stats</span>
+                </a>
+                <a href="drives.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>Placement Drives</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="page-title">
+                    <h1>Placement Analytics</h1>
+                    <p>Comprehensive data-driven insights into campus recruitment</p>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn btn-secondary" onclick="window.print()" style="padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.8125rem;">Print Report</button>
+                    <button class="btn btn-primary" onclick="toggleMgmt()" style="padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.8125rem;">Manage Data</button>
+                    <div class="user-avatar" id="userAvatar">A</div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- KPI Row -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <span class="kpi-label">Total Students</span>
+                        <span class="kpi-value" id="kpiTotalStudents">0</span>
+                        <span class="kpi-trend">All final year batches</span>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">Students Placed</span>
+                        <span class="kpi-value" id="kpiPlacedStudents">0</span>
+                        <span class="kpi-trend trend-up">↑ Current Season</span>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">Placement Rate</span>
+                        <span class="kpi-value" id="kpiPlacementRate">0%</span>
+                        <div class="analysis-bar-container-portal" style="height: 4px; margin-top: 10px;">
+                            <div id="kpiRateBar" class="analysis-bar-portal" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">Average Package</span>
+                        <span class="kpi-value" id="kpiAvgPackage">₹ 0 LPA</span>
+                        <span class="kpi-trend" id="kpiMaxPackage">Max: ₹ 0 LPA</span>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="analytics-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Placement by Branch</div>
+                        <div id="branchEmpty" class="empty-chart-message hidden">
+                            <p style="font-weight: 500;">No placements recorded yet</p>
+                            <p style="font-size: 0.75rem; margin-top: 5px;">Charts will populate as students are marked "Placed".</p>
+                        </div>
+                        <div style="flex: 1; position: relative;">
+                            <canvas id="branchChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Salary Distribution -->
+                    <div class="chart-container">
+                        <div class="chart-title">Salary Distribution (LPA)</div>
+                        <div id="salaryEmpty" class="empty-chart-message hidden">
+                            <p style="font-weight: 500;">No package data available</p>
+                            <p style="font-size: 0.75rem; margin-top: 5px;">Awaiting official offers for the current season.</p>
+                        </div>
+                        <div style="flex: 1; position: relative;">
+                            <canvas id="salaryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Application Funnel -->
+                    <div class="chart-container">
+                        <div class="chart-title">Recruitment Pipeline</div>
+                        <div id="applicationEmpty" class="empty-chart-message hidden">
+                            <p style="font-weight: 500;">No active applications</p>
+                        </div>
+                        <div style="flex: 1; position: relative;">
+                            <canvas id="applicationChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Recruiters -->
+                    <div class="chart-container">
+                        <div class="chart-title">Top Hiring Partners</div>
+                        <div style="margin-top: 1rem;">
+                            <table class="leaderboard-table">
+                                <thead>
+                                    <tr>
+                                        <th>Company Name</th>
+                                        <th>Active Hires</th>
+                                        <th>Engagement</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recruiterTableBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Management Section (Hidden by default) -->
+                <div id="mgmtSection" class="mgmt-section">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Manual Data Override</h3>
+                            <p style="font-size: 0.8125rem; color: var(--text-secondary);">Use this only if you need to manually adjust stats that aren't captured by the automated system.</p>
+                        </div>
+                        <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                            <button class="btn btn-secondary" onclick="alert('Manual entry is currently disabled as real-time analytics are active.')">Adjust Target Goals</button>
+                            <button class="btn btn-secondary" onclick="alert('Exports available in CSV format soon.')">Export Raw Data</button>
+                            <button class="btn btn-red" onclick="location.reload()">Refresh Data Sync</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        let charts = {};
+
+        (async function() {
+            const user = await checkAuth('admin');
+            if (user) {
+                document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+                loadAnalytics();
+            }
+        })();
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch('/api/admin/analytics', { credentials: 'include' });
+                if (!response.ok) throw new Error('Failed to load analytics');
+                const data = await response.json();
+
+                updateKPIs(data.overview, data.salary_analysis);
+                
+                // Render charts with resilience
+                try { renderBranchChart(data.branch_distribution); } catch (e) { console.error("Branch Chart Error:", e); }
+                try { renderSalaryChart(data.salary_analysis); } catch (e) { console.error("Salary Chart Error:", e); }
+                try { renderApplicationChart(data.application_status); } catch (e) { console.error("Pipeline Chart Error:", e); }
+                try { renderRecruiterTable(data.top_recruiters); } catch (e) { console.error("Recruiter Table Error:", e); }
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        function updateKPIs(overview, salary) {
+            document.getElementById('kpiTotalStudents').textContent = Number(overview.total_students || 0);
+            document.getElementById('kpiPlacedStudents').textContent = Number(overview.total_placed || 0);
+            const rate = Number(overview.placement_rate || 0);
+            document.getElementById('kpiPlacementRate').textContent = rate + '%';
+            document.getElementById('kpiRateBar').style.width = rate + '%';
+            document.getElementById('kpiAvgPackage').textContent = `₹ ${Number(salary?.avg_package || 0).toFixed(2)} LPA`;
+            document.getElementById('kpiMaxPackage').textContent = `Max: ₹ ${Number(salary?.max_package || 0).toFixed(2)} LPA`;
+        }
+
+        function renderBranchChart(branches) {
+            const ctx = document.getElementById('branchChart').getContext('2d');
+            if (!branches || branches.length === 0) {
+                document.getElementById('branchEmpty').classList.remove('hidden');
+                return;
+            }
+
+            const labels = branches.map(b => b.branch || 'General');
+            const placedData = branches.map(b => Number(b.placed || 0));
+            const totalPlaced = placedData.reduce((a, b) => a + b, 0);
+
+            if (totalPlaced === 0) {
+                document.getElementById('branchEmpty').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('branchEmpty').classList.add('hidden');
+            }
+
+            if (charts.branch) charts.branch.destroy();
+            
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#a855f7');
+
+            charts.branch = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: placedData,
+                        backgroundColor: ['#6366f1', '#a855f7', '#f43f5e', '#fbbf24', '#10b981'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 11, family: 'Inter' }
+                            }
+                        },
+                        tooltip: { backgroundColor: '#1e293b', padding: 12, cornerRadius: 8 }
+                    },
+                    cutout: '75%'
+                }
+            });
+        }
+
+        function renderSalaryChart(salary) {
+            const ctx = document.getElementById('salaryChart').getContext('2d');
+            const dataPoints = [
+                Number(salary?.bucket_0_5 || 0),
+                Number(salary?.bucket_5_10 || 0),
+                Number(salary?.bucket_10_15 || 0),
+                Number(salary?.bucket_15_plus || 0)
+            ];
+
+            const totalSalaryData = dataPoints.reduce((a, b) => a + b, 0);
+            if (totalSalaryData === 0) {
+                document.getElementById('salaryEmpty').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('salaryEmpty').classList.add('hidden');
+            }
+
+            if (charts.salary) charts.salary.destroy();
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#818cf8');
+
+            charts.salary = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['< 5 LPA', '5 - 10 LPA', '10 - 15 LPA', '15+ LPA'],
+                    datasets: [{
+                        label: 'Students',
+                        data: dataPoints,
+                        backgroundColor: gradient,
+                        borderRadius: 8,
+                        barThickness: 32
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', padding: 12, cornerRadius: 8 }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false }, 
+                            ticks: { precision: 0, color: '#64748b' } 
+                        },
+                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+        }
+
+        function renderApplicationChart(statuses) {
+            const ctx = document.getElementById('applicationChart').getContext('2d');
+            if (!statuses || statuses.length === 0) {
+                document.getElementById('applicationEmpty').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('applicationEmpty').classList.add('hidden');
+            }
+
+            const labels = statuses.map(s => s.status.toUpperCase());
+            const counts = statuses.map(s => Number(s.count || 0));
+
+            if (charts.application) charts.application.destroy();
+            charts.application = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: '#10b981',
+                        borderRadius: 4,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', padding: 12, cornerRadius: 8 }
+                    },
+                    scales: {
+                        x: { 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false }, 
+                            ticks: { precision: 0, color: '#64748b' } 
+                        },
+                        y: { grid: { display: false }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+        }
+
+        function renderRecruiterTable(recruiters) {
+            const tbody = document.getElementById('recruiterTableBody');
+            if (!recruiters || recruiters.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 2rem; color: var(--text-secondary);">No hires recorded yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = recruiters.map(r => `
+                <tr>
+                    <td><strong>${r.name}</strong></td>
+                    <td><span class="badge badge-blue">${Number(r.hires)} Hires</span></td>
+                    <td>
+                        <div class="analysis-bar-container-portal" style="width: 100px; height: 6px; background: rgba(0,0,0,0.05); border-radius: 3px; overflow: hidden;">
+                            <div class="analysis-bar-portal" style="width: ${Math.min(100, Number(r.hires) * 10)}%; height: 100%; background: var(--accent-blue); border-radius: 3px;"></div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function toggleMgmt() {
+            const section = document.getElementById('mgmtSection');
+            section.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

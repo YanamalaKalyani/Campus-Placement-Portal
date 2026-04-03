@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile - Campus Placement Portal</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar sidebar-company">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon" id="companyLogoInitial">C</div>
+                    <div class="sidebar-logo-text">
+                        <h2 id="companyName">Company</h2>
+                        <p>Recruiter Portal</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+                <a href="applications.html" class="nav-item"><span class="nav-icon">📝</span><span>Applications</span></a>
+                <a href="students.html" class="nav-item"><span class="nav-icon">👥</span><span>Student Profiles</span></a>
+                <a href="profile.html" class="nav-item active"><span class="nav-icon">🏢</span><span>Company Profile</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📊</span><span>Analytics</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="page-title">
+                    <h1>Company Profile</h1>
+                    <p>Manage your company information and placement preferences</p>
+                </div>
+                <div class="user-info">
+                    <div class="user-details">
+                        <span class="user-name" id="userName">Company</span>
+                        <span class="user-role">Recruitment Team</span>
+                    </div>
+                    <div class="user-avatar" id="userAvatar">C</div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="dashboard-card" style="max-width: 900px; width: 100%;">
+                    <div class="card-header" style="align-items: center;">
+                        <h3>Company Profile</h3>
+                        <button id="editProfileBtn" class="btn btn-primary btn-sm" style="width:auto;" onclick="toggleProfileEdit(event)">Edit</button>
+                    </div>
+                    <div id="alertContainer"></div>
+                    <form id="companyProfileForm">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Company Name</label>
+                            <input type="text" id="name" name="name" class="form-input" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-input" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="website" class="form-label">Website</label>
+                                <input type="url" id="website" name="website" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact" class="form-label">Contact</label>
+                                <input type="text" id="contact" name="contact" class="form-input" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="domain" class="form-label">Industry Domain</label>
+                                <input type="text" id="domain" name="domain" class="form-input" placeholder="IT, Finance, Manufacturing" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="package_lpa" class="form-label">Package (LPA)</label>
+                                <input type="number" id="package_lpa" name="package_lpa" class="form-input" step="0.1" min="0" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="min_cgpa" class="form-label">Minimum CGPA</label>
+                                <input type="number" id="min_cgpa" name="min_cgpa" class="form-input" step="0.01" min="0" max="10" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="max_backlogs" class="form-label">Max Backlogs</label>
+                                <input type="number" id="max_backlogs" name="max_backlogs" class="form-input" min="0" step="1" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="position" class="form-label">Target Position</label>
+                                <input type="text" id="position" name="position" class="form-input" placeholder="e.g., Software Engineer" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="rounds" class="form-label">Recruitment Rounds</label>
+                                <input type="number" id="rounds" name="rounds" class="form-input" min="1" step="1" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="required_skills" class="form-label">Required Skills</label>
+                                <input type="text" id="required_skills" name="required_skills" class="form-input" placeholder="e.g., Python, SQL" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea id="description" name="description" class="form-input" rows="4" readonly></textarea>
+                        </div>
+
+                        <button type="submit" id="saveProfileBtn" class="btn btn-primary" style="display:none;">Save Profile</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+    <script>
+        function setProfileReadOnly(readOnly) {
+            const form = document.getElementById('companyProfileForm');
+            form.querySelectorAll('input, textarea').forEach(el => {
+                if (el.id === 'email') return; // email always read-only
+                el.readOnly = readOnly;
+                el.disabled = false;
+            });
+
+            document.getElementById('saveProfileBtn').style.display = readOnly ? 'none' : 'inline-flex';
+            document.getElementById('editProfileBtn').textContent = readOnly ? 'Edit' : 'Cancel';
+
+            // set visual style for editable state
+            form.classList.toggle('editable', !readOnly);
+        }
+
+        function toggleProfileEdit(event) {
+            event.preventDefault();
+            const isEditing = document.getElementById('saveProfileBtn').style.display !== 'none';
+            setProfileReadOnly(isEditing);
+        }
+
+        setProfileReadOnly(true);
+    </script>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        (async function() {
+            const user = await checkAuth('company');
+            if (user) {
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userAvatar').textContent = user.name[0].toUpperCase();
+                document.getElementById('companyName').textContent = user.name;
+                document.getElementById('companyLogoInitial').textContent = user.name[0].toUpperCase();
+                loadCompanyProfile();
+            }
+        })();
+
+        async function loadCompanyProfile() {
+            try {
+                const response = await fetch('/api/company/profile', {
+                    credentials: 'include'
+                });
+                if (!response.ok) throw new Error('Failed to load company profile');
+
+                const data = await response.json();
+                const company = data.company;
+
+                document.getElementById('name').value = company.name || '';
+                document.getElementById('email').value = company.email || '';
+                document.getElementById('website').value = company.website || '';
+                document.getElementById('contact').value = company.contact || '';
+                document.getElementById('domain').value = company.domain || '';
+                document.getElementById('package_lpa').value = company.package_lpa || '';
+                document.getElementById('min_cgpa').value = company.min_cgpa || '';
+                document.getElementById('max_backlogs').value = company.max_backlogs || '';
+                document.getElementById('position').value = company.position || '';
+                document.getElementById('rounds').value = company.rounds || '';
+                document.getElementById('required_skills').value = company.required_skills || '';
+                document.getElementById('description').value = company.description || '';
+            } catch (error) {
+                console.error('Error loading company profile:', error);
+            }
+        }
+
+        document.getElementById('companyProfileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('name').value,
+                website: document.getElementById('website').value,
+                contact: document.getElementById('contact').value,
+                domain: document.getElementById('domain').value,
+                package_lpa: parseFloat(document.getElementById('package_lpa').value) || 0,
+                min_cgpa: parseFloat(document.getElementById('min_cgpa').value) || 0,
+                max_backlogs: parseInt(document.getElementById('max_backlogs').value) || 0,
+                position: document.getElementById('position').value,
+                required_skills: document.getElementById('required_skills').value,
+                rounds: parseInt(document.getElementById('rounds').value) || 1,
+                description: document.getElementById('description').value
+            };
+
+            // Ensure we are in editing mode before saving
+            if (document.getElementById('saveProfileBtn').style.display === 'none') {
+                showAlert('Click Edit to modify profile', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/company/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showAlert('Company profile updated successfully!', 'success');
+                } else {
+                    showAlert(result.error || 'Failed to update company profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating company profile:', error);
+                showAlert('Network error. Please try again.', 'error');
+            }
+        });
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+    </script>
+</body>
+</html>

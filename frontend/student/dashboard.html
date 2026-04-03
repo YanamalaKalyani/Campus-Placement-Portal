@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Campus Placement Portal</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Premium Dashboard Components */
+        .analysis-status-grid-portal {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 1.5rem 0;
+        }
+        .analysis-status-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 6px rgba(168, 85, 247, 0.2));
+        }
+        .analysis-status-number.unplaced {
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 6px rgba(244, 63, 94, 0.2));
+        }
+        .analysis-status-label {
+            display: block;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .analysis-vertical-divider {
+            width: 1px;
+            height: 60px;
+            background: rgba(0,0,0,0.05);
+        }
+        .analysis-item-portal {
+            margin-bottom: 1.5rem;
+        }
+        .analysis-header-portal {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .analysis-bar-container-portal {
+            height: 10px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .analysis-bar-portal {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                    </div>
+                    <div class="sidebar-logo-text">
+                        <h2>Campus Portal</h2>
+                        <p>Student Dashboard</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="companies.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Companies</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>My Profile</span>
+                </a>
+                <a href="applications.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span>Applications</span>
+                </a>
+                <a href="notifications.html" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span>Notifications</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                    <p>Your placement journey at a glance</p>
+                </div>
+                <div class="user-info">
+                    <div class="user-details">
+                        <span class="user-name" id="userName">Student</span>
+                        <span class="user-role">Student</span>
+                    </div>
+                    <div class="user-avatar" id="userAvatar">S</div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <span class="stat-label">My Applications</span>
+                        <span class="stat-value" id="applicationsCount">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Current CGPA</span>
+                        <span class="stat-value" id="cgpaValue">0.0</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Status</span>
+                        <span class="stat-value success" id="placementStatus">Unplaced</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Package Offered</span>
+                        <span class="stat-value money" id="packageOffered">-</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Branch-wise Placement -->
+                    <div class="dashboard-card">
+                        <div class="card-header" style="margin-bottom: 2rem;">
+                            <h3 style="font-weight: 700; font-size: 1rem;">Branch-wise Placement</h3>
+                        </div>
+                        <div id="branchStats">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Placement Status Overview -->
+                    <div class="dashboard-card" style="display: flex; flex-direction: column; min-height: 350px;">
+                        <div class="card-header" style="margin-bottom: 2rem;">
+                            <h3 style="font-weight: 700; font-size: 1rem;">Overall Placement Status</h3>
+                        </div>
+                        <div class="analysis-status-grid-portal" style="flex: 1;">
+                            <div class="analysis-status-box" style="text-align: center;">
+                                <span class="analysis-status-number" id="boxPlacedCount">0</span>
+                                <span class="analysis-status-label">Placed</span>
+                            </div>
+                            <div class="analysis-vertical-divider"></div>
+                            <div class="analysis-status-box" style="text-align: center;">
+                                <span class="analysis-status-number unplaced" id="boxUnplacedCount">0</span>
+                                <span class="analysis-status-label">Unplaced</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05);">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary);">
+                                <span>Campus Placement Ratio</span>
+                                <span style="font-weight: 700; color: var(--accent-purple);" id="placementRatio">0%</span>
+                            </div>
+                            <div class="analysis-bar-container-portal" style="margin-top: 0.75rem;">
+                                <div class="analysis-bar-portal" id="ratioBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        (async function() {
+            const user = await checkAuth('student');
+            if (user) {
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+                loadDashboard();
+            }
+        })();
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/student/dashboard', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) throw new Error('Failed to load dashboard');
+                
+                const data = await response.json();
+                const student = data.student;
+                const stats = data.stats;
+                
+                // Update student stats
+                document.getElementById('applicationsCount').textContent = data.applications_count;
+                document.getElementById('cgpaValue').textContent = student.cgpa || '0.0';
+                
+                const statusEl = document.getElementById('placementStatus');
+                if (student.placement_status === 'placed') {
+                    statusEl.textContent = 'Placed';
+                    statusEl.classList.add('success');
+                    statusEl.classList.remove('danger');
+                } else {
+                    statusEl.textContent = 'Unplaced';
+                    statusEl.classList.remove('success');
+                }
+                
+                document.getElementById('packageOffered').textContent = 
+                    student.package_offered > 0 ? formatCurrency(student.package_offered) : '-';
+                
+                // Update overall stats with Number safety
+                const placedStudents = Number(data.stats?.placed_students || 0);
+                const totalStudents = Number(data.stats?.total_students || 0);
+                const unplacedStudents = Math.max(0, totalStudents - placedStudents);
+                const ratio = Number(data.stats?.placement_ratio || 0);
+
+                document.getElementById('placementRatio').textContent = ratio + '%';
+                document.getElementById('ratioBar').style.width = ratio + '%';
+                document.getElementById('boxPlacedCount').textContent = placedStudents;
+                document.getElementById('boxUnplacedCount').textContent = unplacedStudents;
+                
+                // Branch stats Rendering
+                const branchList = data.branch_stats || [];
+                const branchContainer = document.getElementById('branchStats');
+
+                if (branchList && branchList.length > 0) {
+                    // Sort by percentage placed
+                    branchList.sort((a, b) => (b.placed / b.total) - (a.placed / a.total));
+
+                    branchContainer.innerHTML = branchList.map(stat => {
+                        const total = Number(stat.total || 0);
+                        const placed = Number(stat.placed || 0);
+                        const percentage = total > 0 ? Math.round((placed / total) * 100) : 0;
+
+                        return `
+                            <div class="analysis-item-portal">
+                                <div class="analysis-header-portal">
+                                    <span style="font-weight: 600; color: var(--text-primary);">${stat.branch}</span>
+                                    <span style="font-family: inherit; font-weight: 700; color: var(--accent-purple);">${percentage}%</span>
+                                </div>
+                                <div class="analysis-bar-container-portal">
+                                    <div class="analysis-bar-portal" style="width: ${percentage}%;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-secondary);">
+                                    <span>${placed} Placed</span>
+                                    <span>${total} Total</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    branchContainer.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Awaiting placement data...</p>';
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+    </script>
+    <script src="../js/notifications.js"></script>
+</body>
+</html>

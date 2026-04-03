@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Campus Placement Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                    </svg>
+                </div>
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to your account</p>
+                <span id="roleBadge" class="role-badge"></span>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="identifier" class="form-label" id="identifierLabel">Email</label>
+                    <input type="text" id="identifier" name="identifier" class="form-input" placeholder="Enter your email or enrollment number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+
+                <input type="hidden" id="role" name="role" value="">
+
+                <button type="submit" class="btn btn-primary" id="loginBtn">
+                    <span id="loginBtnText">Sign In</span>
+                    <span id="loginSpinner" class="spinner hidden"></span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don&apos;t have an account? <a href="register.html" id="registerLink">Create one</a></p>
+                <p style="margin-top: 0.5rem;"><a href="index.html">Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Get role from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const role = urlParams.get('role') || 'student';
+
+        document.getElementById('role').value = role;
+        document.getElementById('roleBadge').textContent = role;
+        document.getElementById('roleBadge').classList.add(role);
+        document.getElementById('registerLink').href = `register.html?role=${role}`;
+
+        const identifierLabel = document.getElementById('identifierLabel');
+        const identifierInput = document.getElementById('identifier');
+
+        if (role === 'student') {
+            identifierLabel.textContent = 'Enrollment Number';
+            identifierInput.type = 'text';
+            identifierInput.placeholder = 'EN12345678';
+        } else {
+            identifierLabel.textContent = 'Email';
+            identifierInput.type = 'email';
+            identifierInput.placeholder = role === 'admin' ? 'admin@campus.edu' : 'company@domain.com';
+        }
+
+        if (role === 'admin') {
+            document.getElementById('registerLink').style.display = 'none';
+        }
+
+        // Update page title based on role
+        const titles = {
+            admin: 'Admin Login',
+            student: 'Student Login',
+            company: 'Company Login'
+        };
+        document.querySelector('.auth-title').textContent = titles[role] || 'Sign In';
+    </script>
+</body>
+</html>
