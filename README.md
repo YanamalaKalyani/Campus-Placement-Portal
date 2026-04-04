@@ -187,4 +187,4 @@ The project uses a MySQL database named **`campus_placement`** to manage all pla
 
 ---
 
-** 💼 A brief overview of this project is also available on my LinkedIn profile: www.linkedin.com/in/priti-bhadja-34b46b35a **
+**💼 A brief overview of this project is also available on my LinkedIn profile: www.linkedin.com/in/priti-bhadja-34b46b35a**
