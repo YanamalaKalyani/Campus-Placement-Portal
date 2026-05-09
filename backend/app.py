@@ -1,5 +1,3 @@
-from flask import Flask, request, jsonify, session, send_from_directory
-from flask_cors import CORS
 from flask import Flask, request, jsonify, session, send_from_directory, g
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,7 +7,7 @@ from datetime import datetime
 from functools import wraps
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
-app.secret_key = os.environ.get('SECRET_KEY', 'campus_placement_secret_key_2024')
+app.secret_key = os.environ.get('SECRET_KEY', 'super_secret_key_12345')
 CORS(app, supports_credentials=True)
 
 # ====================== SQLITE DATABASE ======================
@@ -17,7 +15,7 @@ DATABASE = 'database.db'
 
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect(DATABASE)
+        g.db = sqlite3.connect(DATABASE, check_same_thread=False)
         g.db.row_factory = sqlite3.Row
     return g.db
 
@@ -27,9 +25,15 @@ def close_db(exception):
     if db is not None:
         db.close()
 
-def get_db_connection():
-    return get_db()
-
+# Initialize database (call this only inside routes)
+def init_db():
+    with app.app_context():
+        db = get_db()
+        cursor = db.cursor()
+        # Create tables if not exists (add your table creation queries here)
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users (...)''')  # you can expand later
+        db.commit()
+# ============================================================
 # ============================================================
 # Ensure we always have a default admin user
 def ensure_default_admin():
@@ -1478,6 +1482,19 @@ def company_student_detail(student_id):
         cursor.close()
         conn.close()
 
+
+# ====================== SERVE FRONTEND ======================
+@app.route('/')
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    try:
+        return send_from_directory(app.static_folder, path)
+    except FileNotFoundError:
+        return send_from_directory(app.static_folder, 'index.html')
+# ============================================================
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
