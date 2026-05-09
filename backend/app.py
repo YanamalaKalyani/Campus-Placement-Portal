@@ -1486,23 +1486,7 @@ def company_student_detail(student_id):
 # ====================== SERVE FRONTEND ======================
 # This must stay at the very bottom (before if __name__ == '__main__')
 
-@app.route('/')
-def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
 
-@app.route('/<path:path>')
-def serve_static(path):
-    try:
-        return send_from_directory(app.static_folder, path)
-    except FileNotFoundError:
-        # Return index.html for any unknown route (helps with frontend routing)
-        return send_from_directory(app.static_folder, 'index.html')
-# ============================================================
-
-
-# ====================== IMPORTANT: COMMENT THESE OUT ======================
-# ensure_default_admin()      # ← Keep this commented
-# create_tables()             # ← Keep this commented if exists
 # ==========================================================================
 
 
