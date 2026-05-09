@@ -1487,12 +1487,17 @@ def company_student_detail(student_id):
 
 
 # Serve Frontend
+# Serve Frontend (Static Files)
 @app.route('/')
-def home():
-    return send_from_directory('../frontend', 'index.html')
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
 
+# This handles all other files (css, js, images, etc.)
 @app.route('/<path:path>')
 def serve_static(path):
-    return send_from_directory('../frontend', path)
+    try:
+        return send_from_directory(app.static_folder, path)
+    except:
+        return send_from_directory(app.static_folder, 'index.html')
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
