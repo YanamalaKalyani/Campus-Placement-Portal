@@ -4,10 +4,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import os
 from datetime import datetime
-from functools import wraps
 
-app = Flask(__name__, static_folder='../frontend', static_url_path='')
-app.secret_key = os.environ.get('SECRET_KEY', 'super_secret_key_12345')
+app = Flask(__name__, 
+            static_folder='../frontend', 
+            static_url_path='')
+app.secret_key = 'super_secret_key_12345'
 CORS(app, supports_credentials=True)
 
 # ====================== SQLITE DATABASE ======================
@@ -25,6 +26,7 @@ def close_db(exception):
     if db is not None:
         db.close()
 
+# ============================================================
 # Initialize database (call this only inside routes)
 def init_db():
     with app.app_context():
@@ -1481,25 +1483,9 @@ def company_student_detail(student_id):
         cursor.close()
         conn.close()
 
-
 # ====================== SERVE FRONTEND ======================
-# This must stay at the very bottom (before if __name__ == '__main__')
 
-
-# ==========================================================================
-# ====================== SERVE FRONTEND (FINAL) ======================
-@app.route('/')
-def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    try:
-        return send_from_directory(app.static_folder, path)
-    except FileNotFoundError:
-        return send_from_directory(app.static_folder, 'index.html')
-# ===================================================================
+# ============================================================
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-ue, port=5000)
