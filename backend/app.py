@@ -96,14 +96,25 @@ def admin_required(f):
     return decorated_function
 
 # Serve frontend
+# ====================== SERVE FRONTEND ======================
+app = Flask(__name__, 
+            static_folder='../frontend', 
+            static_url_path='')
+
+# Serve main page
 @app.route('/')
 def serve_index():
     return send_from_directory(app.static_folder, 'index.html')
 
+# Serve all static files (css, js, images, etc.)
 @app.route('/<path:path>')
 def serve_static(path):
-    return send_from_directory(app.static_folder, path)
-
+    try:
+        return send_from_directory(app.static_folder, path)
+    except FileNotFoundError:
+        # If file not found, return index.html (for SPA-like behavior)
+        return send_from_directory(app.static_folder, 'index.html')
+# ============================================================
 # Authentication Routes
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -1485,19 +1496,24 @@ def company_student_detail(student_id):
         cursor.close()
         conn.close()
 
+# ====================== SERVE FRONTEND ======================
+# This must be at the BOTTOM of the file (before if __name__ == "__main__")
 
-# Serve Frontend
-# Serve Frontend (Static Files)
+from flask import send_from_directory
+
+# Configure Flask to serve frontend files
+app.static_folder = '../frontend'
+
 @app.route('/')
 def serve_index():
     return send_from_directory(app.static_folder, 'index.html')
 
-# This handles all other files (css, js, images, etc.)
 @app.route('/<path:path>')
 def serve_static(path):
     try:
         return send_from_directory(app.static_folder, path)
-    except:
+    except FileNotFoundError:
         return send_from_directory(app.static_folder, 'index.html')
+# ============================================================
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
