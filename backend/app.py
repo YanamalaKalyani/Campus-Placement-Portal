@@ -62,7 +62,7 @@ def ensure_default_admin():
         cursor.close()
         conn.close()
 
-ensure_default_admin()
+#ensure_default_admin()
 
 
 def login_required(f):
@@ -1484,6 +1484,8 @@ def company_student_detail(student_id):
 
 
 # ====================== SERVE FRONTEND ======================
+# This must stay at the very bottom (before if __name__ == '__main__')
+
 @app.route('/')
 def serve_index():
     return send_from_directory(app.static_folder, 'index.html')
@@ -1493,8 +1495,16 @@ def serve_static(path):
     try:
         return send_from_directory(app.static_folder, path)
     except FileNotFoundError:
+        # Return index.html for any unknown route (helps with frontend routing)
         return send_from_directory(app.static_folder, 'index.html')
 # ============================================================
+
+
+# ====================== IMPORTANT: COMMENT THESE OUT ======================
+# ensure_default_admin()      # ← Keep this commented
+# create_tables()             # ← Keep this commented if exists
+# ==========================================================================
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
