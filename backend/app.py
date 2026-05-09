@@ -1,5 +1,3 @@
-from flask import Flask, request, jsonify, session, send_from_directory, g
-from flask_cors import CORS
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -22,8 +20,8 @@ db_config = {
     'user': os.environ.get('DB_USER', 'root'),
     'password': os.environ.get('DB_PASSWORD', ''),
     'database': os.environ.get('DB_NAME', 'campus_placement'),
+    'port': 3306,
     'pool_name': 'mypool',
-    'port' : 3306,
     'pool_size': 5
 }
 
@@ -49,8 +47,7 @@ def get_db_connection():
     if connection_pool:
         return connection_pool.get_connection()
     return None
-# ============================================================
-# ============================================================
+
 # Ensure we always have a default admin user
 def ensure_default_admin():
     conn = get_db_connection()
@@ -78,7 +75,7 @@ def ensure_default_admin():
         cursor.close()
         conn.close()
 
-#ensure_default_admin()
+ensure_default_admin()
 
 
 def login_required(f):
@@ -96,26 +93,16 @@ def admin_required(f):
             return jsonify({'error': 'Admin access required'}), 403
         return f(*args, **kwargs)
     return decorated_function
-# Serve frontend
-# ====================== SERVE FRONTEND ======================
-app = Flask(__name__, 
-            static_folder='../frontend', 
-            static_url_path='')
 
-# Serve main page
+# Serve frontend
 @app.route('/')
 def serve_index():
     return send_from_directory(app.static_folder, 'index.html')
 
-# Serve all static files (css, js, images, etc.)
 @app.route('/<path:path>')
 def serve_static(path):
-    try:
-        return send_from_directory(app.static_folder, path)
-    except FileNotFoundError:
-        # If file not found, return index.html (for SPA-like behavior)
-        return send_from_directory(app.static_folder, 'index.html')
-# ============================================================
+    return send_from_directory(app.static_folder, path)
+
 # Authentication Routes
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -1496,10 +1483,6 @@ def company_student_detail(student_id):
     finally:
         cursor.close()
         conn.close()
-
-# ====================== SERVE FRONTEND ======================
-
-# ============================================================
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
