@@ -1496,24 +1496,6 @@ def company_student_detail(student_id):
         cursor.close()
         conn.close()
 
-# ====================== SERVE FRONTEND ======================
-# This must be at the BOTTOM of the file (before if __name__ == "__main__")
 
-from flask import send_from_directory
-
-# Configure Flask to serve frontend files
-app.static_folder = '../frontend'
-
-@app.route('/')
-def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    try:
-        return send_from_directory(app.static_folder, path)
-    except FileNotFoundError:
-        return send_from_directory(app.static_folder, 'index.html')
-# ============================================================
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
