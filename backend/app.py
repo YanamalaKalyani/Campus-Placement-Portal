@@ -80,7 +80,6 @@ def admin_required(f):
             return jsonify({'error': 'Admin access required'}), 403
         return f(*args, **kwargs)
     return decorated_function
-
 # Serve frontend
 # ====================== SERVE FRONTEND ======================
 app = Flask(__name__, 
@@ -1488,7 +1487,19 @@ def company_student_detail(student_id):
 
 
 # ==========================================================================
+# ====================== SERVE FRONTEND (FINAL) ======================
+@app.route('/')
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
 
+@app.route('/<path:path>')
+def serve_static(path):
+    try:
+        return send_from_directory(app.static_folder, path)
+    except FileNotFoundError:
+        return send_from_directory(app.static_folder, 'index.html')
+# ===================================================================
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+ue, port=5000)
