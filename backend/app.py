@@ -23,6 +23,7 @@ db_config = {
     'password': os.environ.get('DB_PASSWORD', ''),
     'database': os.environ.get('DB_NAME', 'campus_placement'),
     'pool_name': 'mypool',
+    'port' : 3306,
     'pool_size': 5
 }
 
