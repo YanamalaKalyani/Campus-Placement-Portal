@@ -1,54 +1,36 @@
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
+from flask import Flask, request, jsonify, session, send_from_directory, g
+from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-import mysql.connector
-from mysql.connector import pooling
+import sqlite3
 import os
 from datetime import datetime
 from functools import wraps
-from flask import send_from_directory
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 app.secret_key = os.environ.get('SECRET_KEY', 'campus_placement_secret_key_2024')
 CORS(app, supports_credentials=True)
 
-DEFAULT_ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@campus.edu')
-DEFAULT_ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
+# ====================== SQLITE DATABASE ======================
+DATABASE = 'database.db'
 
-# Database configuration
-db_config = {
-    'host': os.environ.get('DB_HOST', 'localhost'),
-    'user': os.environ.get('DB_USER', 'root'),
-    'password': os.environ.get('DB_PASSWORD', ''),
-    'database': os.environ.get('DB_NAME', 'campus_placement'),
-    'port': 3307,
-    'pool_name': 'mypool',
-    'pool_size': 5
-}
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect(DATABASE)
+        g.db.row_factory = sqlite3.Row
+    return g.db
 
-# Upload configuration
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', 'resumes')
-ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
-
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# Create connection pool
-try:
-    connection_pool = mysql.connector.pooling.MySQLConnectionPool(**db_config)
-except Exception as e:
-    print(f"Error creating connection pool: {e}")
-    connection_pool = None
+@app.teardown_appcontext
+def close_db(exception):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
 def get_db_connection():
-    if connection_pool:
-        return connection_pool.get_connection()
-    return None
+    return get_db()
 
+# ============================================================
 # Ensure we always have a default admin user
 def ensure_default_admin():
     conn = get_db_connection()
